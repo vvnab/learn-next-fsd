@@ -1,8 +1,8 @@
-import Cards, { CardsSkeleton } from "@/features/cards";
-import RevenueChart, { RevenueChartSkeleton } from "@/features/revenue-chart";
+import Cards, { CardsSkeleton } from "@/widgets/cards";
+import RevenueChart, { RevenueChartSkeleton } from "@/widgets/revenue-chart";
 import LatestInvoices, {
   LatestInvoicesSkeleton,
-} from "@/features/latest-invoices";
+} from "@/widgets/latest-invoices";
 import { Suspense } from "react";
 import { lusitana } from "@/shared/ui/fonts";
 
