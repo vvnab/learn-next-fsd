@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   CheckIcon,
@@ -5,15 +7,35 @@ import {
   CurrencyDollarIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { InvoiceForm } from "@/shared/lib/definitions";
-import { Button } from "@/shared/ui/button";
-import { fetchCustomers, createInvoice } from "../api";
 
-export default async function Form({ invoice }: {invoice: InvoiceForm}) {
-  const customers = await fetchCustomers();
+import { Button } from "@/shared/ui/button";
+import { fetchCustomers, fetchInvoiceById, updateInvoice } from "../api";
+import { State } from "@/shared/lib/definitions";
+import { notFound } from "next/navigation";
+import { CustomerField, InvoiceForm } from "@/shared/lib/definitions";
+import { useState, useEffect, useActionState } from "react";
+
+export default function Form({ invoiceId }: { invoiceId: string }) {
+  const [customers, setCustomers] = useState<CustomerField[]>([]);
+  const [invoice, setInvoice] = useState<InvoiceForm | null>(null);
+  const initialState: State = { message: null, errors: {} };
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice?.id || "");
+  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+
+  console.log('render');
+
+  useEffect(() => {
+    Promise.all([fetchCustomers(), fetchInvoiceById(invoiceId)]).then(
+      ([customers, invoice]) => {
+        setCustomers(customers);
+        setInvoice(invoice);
+        if (!invoice) notFound();
+      },
+    );
+  }, [invoiceId]);
 
   return (
-    <form action={createInvoice}>
+    <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -25,7 +47,9 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
               id="customer"
               name="customerId"
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={invoice?.customer_id}
+              aria-describedby="customer-error"
+              key={invoice?.id}
             >
               <option value="" disabled>
                 Select a customer
@@ -37,6 +61,14 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
               ))}
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <div id="customer-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.customerId &&
+              state.errors.customerId.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
           </div>
         </div>
 
@@ -54,9 +86,19 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
                 step="0.01"
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                defaultValue={invoice?.amount}
+                aria-describedby="amount-error"
               />
               <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
+          </div>
+          <div id="amount-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.amount &&
+              state.errors.amount.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
           </div>
         </div>
 
@@ -65,7 +107,10 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
-          <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
+          <div
+            className="rounded-md border border-gray-200 bg-white px-[14px] py-3"
+            aria-describedby="status-error"
+          >
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
@@ -74,6 +119,8 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
                   type="radio"
                   value="pending"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2 focus:ring-transparent"
+                  defaultChecked={invoice?.status === "pending"}
+                  key={invoice?.id}
                 />
                 <label
                   htmlFor="pending"
@@ -89,6 +136,8 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
                   type="radio"
                   value="paid"
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2 focus:ring-transparent"
+                  defaultChecked={invoice?.status === "paid"}
+                  key={invoice?.id}
                 />
                 <label
                   htmlFor="paid"
@@ -99,7 +148,18 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
               </div>
             </div>
           </div>
+          <div id="status-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.status &&
+              state.errors.status.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
         </fieldset>
+        <div id="all-errosr" aria-live="polite" aria-atomic="true">
+          <p className="mt-2 text-sm text-red-500">{state.message}</p>
+        </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
@@ -108,7 +168,7 @@ export default async function Form({ invoice }: {invoice: InvoiceForm}) {
         >
           Cancel
         </Link>
-        <Button type="submit">Create Invoice</Button>
+        <Button type="submit">Update Invoice</Button>
       </div>
     </form>
   );
