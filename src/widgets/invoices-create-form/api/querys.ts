@@ -1,7 +1,10 @@
+"use server";
+
 import { client } from "@/shared/lib/data";
 import { CustomerField } from "@/shared/lib/definitions";
 
 export async function fetchCustomers() {
+  
   try {
     const data = await client.sql<CustomerField>`
       SELECT
@@ -14,7 +17,7 @@ export async function fetchCustomers() {
     const customers = data.rows;
     return customers;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
   }
 }

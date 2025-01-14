@@ -25,7 +25,7 @@ export async function fetchCardData() {
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? "0");
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? "0");
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return {
       numberOfCustomers,
@@ -36,5 +36,5 @@ export async function fetchCardData() {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch card data.");
-  }
+  } 
 }

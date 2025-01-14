@@ -1,11 +1,9 @@
 import Form from "@/widgets/invoices-edit-form";
 import Breadcrumbs from "@/features/breadcrumbs";
-import { fetchInvoiceById } from "@/widgets/invoices";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = params.id;
-  const invoice = await fetchInvoiceById(id);
 
   return (
     <main>
@@ -19,7 +17,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form invoice={invoice} />
+      <Form invoiceId={id} />
     </main>
   );
 }

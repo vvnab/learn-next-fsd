@@ -1,5 +1,5 @@
 import { Revenue } from "@/shared/lib/definitions";
-import {client} from "@/shared/lib/data"
+import { client } from "@/shared/lib/data";
 
 export async function fetchRevenue() {
   try {
@@ -7,7 +7,7 @@ export async function fetchRevenue() {
     // Don't do this in production :)
 
     console.log("Fetching revenue data...");
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await client.sql<Revenue>`SELECT * FROM revenue`;
 

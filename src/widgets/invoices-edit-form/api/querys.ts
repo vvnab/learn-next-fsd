@@ -1,5 +1,7 @@
+"use server";
+
 import { client } from "@/shared/lib/data";
-import { CustomerField } from "@/shared/lib/definitions";
+import { CustomerField, InvoiceForm } from "@/shared/lib/definitions";
 
 export async function fetchCustomers() {
   try {
@@ -14,7 +16,32 @@ export async function fetchCustomers() {
     const customers = data.rows;
     return customers;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
+  }
+}
+
+export async function fetchInvoiceById(id: string) {
+  try {
+    const data = await client.sql<InvoiceForm>`
+      SELECT
+        invoices.id,
+        invoices.customer_id,
+        invoices.amount,
+        invoices.status
+      FROM invoices
+      WHERE invoices.id = ${id};
+    `;
+
+    const invoice = data.rows.map((invoice) => ({
+      ...invoice,
+      // Convert amount from cents to dollars
+      amount: invoice.amount / 100,
+    }));
+
+    return invoice[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoice.");
   }
 }
