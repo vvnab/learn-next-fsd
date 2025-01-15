@@ -22,6 +22,8 @@ export default function Form({ invoiceId }: { invoiceId: string }) {
   const updateInvoiceWithId = updateInvoice.bind(null, invoice?.id || "");
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
 
+  console.log('render');
+
   useEffect(() => {
     Promise.all([fetchCustomers(), fetchInvoiceById(invoiceId)]).then(
       ([customers, invoice]) => {
