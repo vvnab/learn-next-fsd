@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Система управления счетами
 
-## Getting Started
+Веб-приложение для управления счетами и клиентами, построенное с использованием Next.js и Feature-Sliced Design.
 
-First, run the development server:
+## Технологии
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend:**
+  - Next.js 14
+  - React
+  - TypeScript
+  - Tailwind CSS
+  - Feature-Sliced Design
+
+- **Backend:**
+  - PostgreSQL
+  - Prisma ORM
+
+## Архитектура
+
+Проект построен по методологии Feature-Sliced Design (FSD) и состоит из следующих слоев:
+
+```
+src/
+├── app/          # Инициализация приложения
+├── pages/        # Страницы приложения
+├── widgets/      # Композиционные компоненты
+├── features/     # Функциональные модули
+├── entities/     # Бизнес-сущности
+└── shared/       # Переиспользуемые модули
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Слои приложения
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Entities** - бизнес-сущности (клиенты, счета)
+2. **Features** - функциональные модули (формы, поиск, пагинация)
+3. **Widgets** - композиционные компоненты (таблицы, графики)
+4. **Pages** - страницы приложения
+5. **App** - инициализация приложения
+6. **Shared** - переиспользуемые компоненты и утилиты
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Функциональность
 
-## Learn More
+- Управление клиентами
+- Создание и редактирование счетов
+- Просмотр статистики и графиков
+- Поиск и фильтрация данных
+- Пагинация и сортировка
 
-To learn more about Next.js, take a look at the following resources:
+## Установка и запуск
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Клонируйте репозиторий:
+```bash
+git clone [url-репозитория]
+cd [название-проекта]
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Установите зависимости:
+```bash
+pnpm install
+```
 
-## Deploy on Vercel
+3. Создайте файл .env и добавьте необходимые переменные окружения:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Запустите миграции базы данных:
+```bash
+pnpm prisma migrate dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Запустите проект в режиме разработки:
+```bash
+pnpm dev
+```
+
+Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000)
+
+## Разработка
+
+### Правила кодирования
+
+1. Следуйте методологии Feature-Sliced Design
+2. Используйте TypeScript для типизации
+3. Пишите тесты для критически важного кода
+4. Следуйте правилам ESLint и Prettier
+
+### Структура модулей
+
+Каждый модуль должен содержать:
+- `index.ts` - публичное API
+- `ui/` - компоненты пользовательского интерфейса
+- `model/` - бизнес-логика и типы
+- `README.md` - документация модуля
+
+## Лицензия
+
+MIT
